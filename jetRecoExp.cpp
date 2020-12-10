@@ -216,7 +216,10 @@ int main (int argc, char* argv[])
         //  hist_mu_npv: mu (x-axis) vs npv (y-axis) distribution 
         if (!stepNum || stepNum >= 1)
         {
-            // TODO fill the mu, npv, and mu vs npv histograms
+             // TODO fill the mu, npv, and mu vs npv histograms
+            hist_mu.Fill(mu_average);
+            hist_npv.Fill(NPV);
+            hist_mu_npv.Fill(mu_average,NPV);
         }
 
 
@@ -230,6 +233,16 @@ int main (int argc, char* argv[])
         if (!stepNum || stepNum >= 2)
         {
             // TODO fill the calorimeter and truth jet pT histograms
+            if (RecoJet_pt->size())
+            {
+                hist_reco_pt_nw.Fill(RecoJet_pt->at(0));
+                hist_reco_pt.Fill(RecoJet_pt->at(0),EventWeight);
+            }
+            if (TruthJet_pt->size())
+            {
+                hist_truth_pt_nw.Fill(TruthJet_pt->at(0));
+                hist_truth_pt.Fill(TruthJet_pt->at(0),EventWeight);
+            }
         }
 
         // Step 3: Pileup dependence
