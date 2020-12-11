@@ -354,8 +354,110 @@ int main (int argc, char* argv[])
         //  hist_response_track_pt100:  Response (pTreco/pTtrue) for the leading track jet matched to the leading truth jet within DR of 0.3, with a truth jet pT cut of 100 GeV, with the event weight
         //  hist_response_track_pt1000: Response (pTreco/pTtrue) for the leading track jet matched to the leading truth jet within DR of 0.3, with a truth jet pT cut of 1000 GeV, with the event weight
         if (!stepNum || stepNum >= 5)
-        {
-            // TODO Match reconstructed jets to truth jets, and then study the response of matched jets (both calorimeter and track jets matched to truth jets)
+        {// TODO Match reconstructed jets to truth jets, and then study the response of matched jets (both calorimeter and track jets matched to truth jets)
+		//Comparing Truth Jet to Reconstructed Jet
+		//20GeV
+		if (TruthJet_pt->size() && TruthJet_pt->at(0)>20.e3)
+		{
+			TLorentzVector truthJet;
+			truthJet.SetPtEtaPhiM(TruthJet_pt->at(0),TruthJet_eta->at(0),TruthJet_phi->at(0),TruthJet_m->at(0));
+			if (RecoJet_pt->size())
+			{
+				TLorentzVector recoJet;
+				recoJet.SetPtEtaPhiM(RecoJet_pt->at(0),RecoJet_eta->at(0),RecoJet_phi->at(0),RecoJet_m->at(0));
+				hist_DRtruth_reco.Fill(truthJet.DeltaR(recoJet),EventWeight);
+				if (fabs(RecoJet_jvf->at(0))>0.5)
+					hist_DRtruth_reco_jvf.Fill(truthJet.DeltaR(recoJet),EventWeight);
+				//Study response from matched truth to reco jets:pt>20GeV
+				if (truthJet.DeltaR(recoJet)<0.3)
+				{
+					hist_response_reco_pt20.Fill(recoJet.Pt()/truthJet.Pt(),EventWeight);
+				}
+			}
+		}
+		//100GeV
+		if (TruthJet_pt->size() && TruthJet_pt->at(0)>100.e3)
+		{
+			TLorentzVector truthJet;
+			truthJet.SetPtEtaPhiM(TruthJet_pt->at(0),TruthJet_eta->at(0),TruthJet_phi->at(0),TruthJet_m->at(0));
+			if (RecoJet_pt->size())
+			{
+				TLorentzVector recoJet;
+				recoJet.SetPtEtaPhiM(RecoJet_pt->at(0),RecoJet_eta->at(0),RecoJet_phi->at(0),RecoJet_m->at(0));
+				//Study response from matched truth to reco jets:pt>100GeV
+				if (truthJet.DeltaR(recoJet)<0.3)
+				{
+					hist_response_reco_pt100.Fill(recoJet.Pt()/truthJet.Pt(),EventWeight);
+				}
+			}
+		}
+		//1000GeV
+		if (TruthJet_pt->size() && TruthJet_pt->at(0)>1000.e3)
+		{
+			TLorentzVector truthJet;
+			truthJet.SetPtEtaPhiM(TruthJet_pt->at(0),TruthJet_eta->at(0),TruthJet_phi->at(0),TruthJet_m->at(0));
+			if (RecoJet_pt->size())
+			{
+				TLorentzVector recoJet;
+				recoJet.SetPtEtaPhiM(RecoJet_pt->at(0),RecoJet_eta->at(0),RecoJet_phi->at(0),RecoJet_m->at(0));
+				//Study response from matched truth to reco jets:pt>1000GeV
+				if (truthJet.DeltaR(recoJet)<0.3)
+				{
+					hist_response_reco_pt1000.Fill(recoJet.Pt()/truthJet.Pt(),EventWeight);
+				}
+			}
+		}
+
+		//Comparing Truth Jet to Track Jet
+		//20GeV
+		if (TruthJet_pt->size() && TruthJet_pt->at(0)>20.e3)
+		{
+			TLorentzVector truthJet;
+			truthJet.SetPtEtaPhiM(TruthJet_pt->at(0),TruthJet_eta->at(0),TruthJet_phi->at(0),TruthJet_m->at(0));
+			if (TrackJet_pt->size())
+			{
+				TLorentzVector trackJet;
+				trackJet.SetPtEtaPhiM(TrackJet_pt->at(0),TrackJet_eta->at(0),TrackJet_phi->at(0),TrackJet_m->at(0));
+				hist_DRtruth_track.Fill(truthJet.DeltaR(trackJet),EventWeight);
+				//Study response from matched truth to reco jets:pt>20GeV
+				if (truthJet.DeltaR(trackJet)<0.3)
+				{
+					hist_response_track_pt20.Fill(trackJet.Pt()/truthJet.Pt(),EventWeight);
+				}
+			}
+		}
+		//100GeV
+		if (TruthJet_pt->size() && TruthJet_pt->at(0)>100.e3)
+		{
+			TLorentzVector truthJet;
+			truthJet.SetPtEtaPhiM(TruthJet_pt->at(0),TruthJet_eta->at(0),TruthJet_phi->at(0),TruthJet_m->at(0));
+			if (TrackJet_pt->size())
+			{
+				TLorentzVector trackJet;
+				trackJet.SetPtEtaPhiM(TrackJet_pt->at(0),TrackJet_eta->at(0),TrackJet_phi->at(0),TrackJet_m->at(0));
+				//Study response from matched truth to reco jets:pt>100GeV
+				if (truthJet.DeltaR(trackJet)<0.3)
+				{
+					hist_response_track_pt100.Fill(trackJet.Pt()/truthJet.Pt(),EventWeight);
+				}
+			}
+		}
+		//1000GeV
+		if (TruthJet_pt->size() && TruthJet_pt->at(0)>1000.e3)
+		{
+			TLorentzVector truthJet;
+			truthJet.SetPtEtaPhiM(TruthJet_pt->at(0),TruthJet_eta->at(0),TruthJet_phi->at(0),TruthJet_m->at(0));
+			if (TrackJet_pt->size())
+			{
+				TLorentzVector trackJet;
+				trackJet.SetPtEtaPhiM(TrackJet_pt->at(0),TrackJet_eta->at(0),TrackJet_phi->at(0),TrackJet_m->at(0));
+				//Study response from matched truth to reco jets:pt>1000GeV
+				if (truthJet.DeltaR(trackJet)<0.3)
+				{
+					hist_response_track_pt1000.Fill(trackJet.Pt()/truthJet.Pt(),EventWeight);
+				}
+			}
+		}				
         }
     }
 
