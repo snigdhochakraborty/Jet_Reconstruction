@@ -308,8 +308,38 @@ int main (int argc, char* argv[])
         //  hist_track_njets_highmu: R=0.4 track jet multiplicity for pT > 20 GeV, mu > 50, with the event weight
         //  hist_track_njets_mu_npv: R=0.4 track jet multiplicity for pT > 20 GeV (z-axis), vs mu (x-axis) and npv (y-axis), with the event weight
         if (!stepNum || stepNum >= 4)
-        {
-            // TODO fill the calorimeter JVF histograms and apply a |JVF|>0.5 cut to the leading calorimeter jet pT spectrum to see the impact of tracking on jet multiplicity suppression, then look at track jets
+	{ // TODO fill the calorimeter JVF histograms and apply a |JVF|>0.5 cut to the leading calorimeter jet pT spectrum to see the impact of tracking on jet multiplicity suppression, then look at track jets
+		if (RecoJet_jvf->size() && RecoJet_pt->at(0)>20.e3)
+			hist_reco_jvf_pt20.Fill(RecoJet_jvf->at(0),EventWeight);
+		if (RecoJet_jvf->size() && RecoJet_pt->at(0)>60.e3)
+			hist_reco_jvf_pt60.Fill(RecoJet_jvf->at(0),EventWeight);
+		if (RecoJet_jvf->size() && RecoJet_pt->at(0)>100.e3)
+			hist_reco_jvf_pt100.Fill(RecoJet_jvf->at(0),EventWeight);
+		if (RecoJet_jvf->size() && fabs(RecoJet_jvf->at(0))>0.5)
+			hist_reco_pt_jvf.Fill(RecoJet_pt->at(0),EventWeight);
+	    //Track Jet pileup studies:
+
+            //Track Jets:Count the number of cluster jets
+		unsigned numJetTrack=0;
+		for (size_t iJet=0; iJet<TrackJet_pt->size();++iJet)
+		{
+			if (TrackJet_pt->at(iJet)>20.e3)
+				numJetTrack++;
+		}
+	    //Track Jets:Considering events with atleast one jet
+		if (numJetTrack !=0)
+		{
+			if (mu_average<30)
+				hist_track_njets_lowmu.Fill(numJetTrack,EventWeight);
+			else if (mu_average>35 && mu_average<45)
+				hist_track_njets_midmu.Fill(numJetTrack,EventWeight);				
+			else if (mu_average>50)
+				hist_track_njets_highmu.Fill(numJetTrack,EventWeight);
+			hist_track_njets_mu_npv.Fill(mu_average,NPV,numJetTrack,EventWeight);
+		}
+		//Track Jet pT distribution
+		if (TrackJet_pt->size())
+			hist_track_pt.Fill(TrackJet_pt->at(0),EventWeight);		
         }
 
         // Step 5: Jet response studies
