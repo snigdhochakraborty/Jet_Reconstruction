@@ -256,8 +256,44 @@ int main (int argc, char* argv[])
         //  hist_reco_njets_mu_npv:  R=0.4 calorimeter jet multiplicity for pT > 20 GeV (z-axis), vs mu (x-axis) and npv (y-axis), with the event weight
         //  hist_truth_njets_mu_npv: R=0.4 truth jet multiplicity for pT > 20 GeV (z-axis), vs mu (x-axis) and npv (y-axis), with the event weight
         if (!stepNum || stepNum >= 3)
-        {
-            // TODO fill the jet multiplicity histograms for calorimeter and truth jets for different mu selections, and also vs both mu and npv
+        {// TODO fill the jet multiplicity histograms for calorimeter and truth jets for different mu selections, and also vs both mu and npv
+            
+            //Reco Jets:Count the number of cluster jets
+		    unsigned numJetReco=0;
+		    for (size_t iJet=0; iJet<RecoJet_pt->size();++iJet)
+		    {
+			    if (RecoJet_pt->at(iJet)>20.e3)
+				    numJetReco++;
+		    }
+	        //Reco Jets:Considering events with atleast one jet
+		    if (numJetReco !=0)
+		    {
+			    if (mu_average<30)
+				    hist_reco_njets_lowmu.Fill(numJetReco,EventWeight);
+			    else if (mu_average>35 && mu_average<45)
+				    hist_reco_njets_midmu.Fill(numJetReco,EventWeight);				
+			    else if (mu_average>50)
+				    hist_reco_njets_highmu.Fill(numJetReco,EventWeight);
+			    hist_reco_njets_mu_npv.Fill(mu_average,NPV,numJetReco,EventWeight);
+		    }
+	        //Truth Jets:Count the number of cluster jets
+		    unsigned numJetTruth=0;
+		    for (size_t iJet=0; iJet<TruthJet_pt->size();++iJet)
+		    {
+			    if (TruthJet_pt->at(iJet)>20.e3)
+				    numJetTruth++;
+		    }
+	        //Truth Jets:Considering events with atleast one jet
+		    if (numJetTruth !=0)
+		    {
+			    if (mu_average<30)
+				    hist_truth_njets_lowmu.Fill(numJetTruth,EventWeight);
+			    else if (mu_average>35 && mu_average<45)
+				    hist_truth_njets_midmu.Fill(numJetTruth,EventWeight);				
+			    else if (mu_average>50)
+				    hist_truth_njets_highmu.Fill(numJetTruth,EventWeight);
+			    hist_truth_njets_mu_npv.Fill(mu_average,NPV,numJetTruth,EventWeight);
+		    }
         }
 
         // Step 4: Tracks and R=0.4 track jets 
