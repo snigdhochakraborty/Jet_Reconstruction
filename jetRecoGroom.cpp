@@ -26,6 +26,8 @@
 
 // Step 3: Building our own R=1.0 jets from topoclusters
 // TODO: add headers here (jet reconstruction and trimming)
+#include "fastjet/ClusterSequence.hh"
+#include "fastjet/tools/Filter.hh"
 
 // Step 4: Building other types of R=1.0 jets from topoclusters
 // TODO: add headers here (Pruning, SoftDrop, Recursive SoftDrop, and Bottom-Up SoftDrop)
@@ -213,6 +215,9 @@ int main (int argc, char* argv[])
 
     // Step 3: Building our own R=1.0 jets from topoclusters
     // TODO: add tools here (jet reconstruction and trimming)
+    fastjet::JetDefinition akt10(fastjet::antikt_algorithm,1.0);
+    fastjet::Transformer *trimmer = new fastjet::Filter(fastjet::JetDefinition(fastjet::kt_algorithm, 0.2), fastjet::SelectorPtFractionMin(0.05) );
+    
     
     // Step 4: Building other types of R=1.0 jets from topoclusters
     // TODO: add tools here (Pruning, SoftDrop, Recursive SoftDrop, and Bottom-Up SoftDrop)
@@ -278,7 +283,34 @@ int main (int argc, char* argv[])
         if (!stepNum || stepNum >= 3)
         {
             // TODO convert the input objects (clusters) to pseudojets, then use them to build R=1.0 ungroomed and trimmed jets, for comparison to the pre-built jets in step 2
+            // TODO convert the input objects (clusters) to pseudojets, then use them to build R=1.0 ungroomed and trimmed jets, for comparison to the pre-built jets in step 2
+            // Convert the clusters into FastJet's four-vector (PseudoJet)
+            std::vector<fastjet::PseudoJet> clusters;
+            clusters.reserve(cluster_pt->size());
+            for (size_t iClus = 0; iClus < cluster_pt->size(); ++iClus)
+            {
+                TLorentzVector cluster;
+                cluster.SetPtEtaPhiM(cluster_pt->at(iClus),cluster_eta->at(iClus),cluster_phi->at(iClus),cluster_m->at(iClus));
+                clusters.push_back(fastjet::PseudoJet(cluster.Px(),cluster.Py(),cluster.Pz(),cluster.E()));
+            }
 
+            // Use fastjet to build new jets
+            fastjet::ClusterSequence cs_a10_clusters(clusters,akt10);
+            std::vector<fastjet::PseudoJet> jets_a10_clusters = fastjet::sorted_by_pt(cs_a10_clusters.inclusive_jets());
+            
+            // Use these jets and compare to the original jets
+            if (jets_a10_clusters.size())
+            {
+                // Trim the jet
+                const fastjet::PseudoJet& ungroomed = jets_a10_clusters.at(0);
+                fastjet::PseudoJet trimmed = (*trimmer)(ungroomed);
+		
+                // Jet pT distribution
+                hist_myungroom_pt_nw.Fill(ungroomed.pt());
+                hist_myungroom_pt.Fill(ungroomed.pt(),EventWeight);
+                hist_mytrimmed_pt_nw.Fill(trimmed.pt());
+                hist_mytrimmed_pt.Fill(trimmed.pt(),EventWeight);
+            }
 
 
             // Step 4: Building other types of R=1.0 jets from topoclusters
