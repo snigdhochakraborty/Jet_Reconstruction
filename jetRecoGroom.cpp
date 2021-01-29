@@ -292,6 +292,7 @@ int main (int argc, char* argv[])
                 TLorentzVector cluster;
                 cluster.SetPtEtaPhiM(cluster_pt->at(iClus),cluster_eta->at(iClus),cluster_phi->at(iClus),cluster_m->at(iClus));
                 clusters.push_back(fastjet::PseudoJet(cluster.Px(),cluster.Py(),cluster.Pz(),cluster.E()));
+		printf(cluster_pt->at(iClus));
             }
 
             // Use fastjet to build new jets
