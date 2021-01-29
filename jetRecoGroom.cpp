@@ -236,6 +236,7 @@ int main (int argc, char* argv[])
         // Print out the even number every 10k events and then load the event
         if (iEvent%10000 == 0)
             printf("Processing event %lld/%lld\n",iEvent,numEvents);
+	    printf(stepNum);
         inTree->GetEntry(iEvent);
 
 
